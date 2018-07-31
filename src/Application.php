@@ -41,6 +41,25 @@ class Application
 		return $this;
 	}
 
+	public function post($path, $action, $name = null): Application
+	{
+		$routing = $this->service('routing');
+		$routing->post($name, $path, $action);
+		return $this;
+	}
+
+	public function redirect($path)
+	{
+		return new \Zend\Diactoros\Response\RedirectResponse($path);
+	}
+
+	public function route(string $name, array $params = [])
+	{
+		$generator = $this->service('routing.generator');
+		$path	   = $generator->generate($name, $params);			
+		return $this->redirect($path);
+	}
+
 	public function start()
 	{
 		$route 	  = $this->service('route');

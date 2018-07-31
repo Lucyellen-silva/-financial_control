@@ -12,7 +12,7 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-12">
-							<a href="#" class="btn btn-default">
+							<a href="{{ route('category-costs.new') }}" class="btn btn-default">
 								<span class="glyphicon glyphicon-plus"></span>
 							</a>
 						</div>
@@ -29,11 +29,12 @@
 									</tr>
 								</thead>
 								<tbody>
+									{% for category in categories %}
 									<tr>
-										<td>ID</td>
-										<td>Name</td>
+										<td>{{ category.id }}</td>
+										<td>{{ category.name }}</td>
 										<td>
-											<a href="#">
+											<a href="{{ route('category-costs.edit', {'id' : category.id}) }}">
 												<span class="glyphicon glyphicon-pencil"></span>
 											</a>
 											<a href="#">
@@ -41,6 +42,7 @@
 											</a>
 										</td>
 									</tr>
+									{% endfor %}
 								</tbody>
 							</table>
 						</div>
