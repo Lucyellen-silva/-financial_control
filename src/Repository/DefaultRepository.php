@@ -1,7 +1,6 @@
 <?php 
 declare(strict_types=1);
 namespace Financeiro\Repository;
-use Illuminate\Database\Eloquent\Model;
 
 class DefaultRepository implements RepositoryInterface
 {
@@ -46,8 +45,14 @@ class DefaultRepository implements RepositoryInterface
 		$model->delete();
 	}
 
-	public function find(int $id)
+	public function find(int $id, bool $failIfNotExist = true)
 	{
-		return $this->model->findOrFail($id);
+		return $failIfNotExist ? $this->model->findOrFail($id) : $this->model->find($id);
 	}
+
+	public function findByField($field, string $value)
+	{
+		return $this->model->where($field, $value)->get();	
+	}
+
 }
