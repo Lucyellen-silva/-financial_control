@@ -25,3 +25,16 @@ $app
         $app->service('auth')->logout();
         return $app->route('auth.show_login_form');
     }, 'auth.logout');
+
+$app->before(function() use($app){
+    $route = $app->service('route');
+    $auth  = $app->service('auth');
+    $routeWhiteList = [
+        'auth.show_login_form',
+        'auth.login'
+    ];
+
+    if(!in_array($route->name, $routeWhiteList) && !$auth->check()){
+        return $app->route('auth.show_login_form');
+    }
+});

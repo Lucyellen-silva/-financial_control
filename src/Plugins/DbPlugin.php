@@ -3,12 +3,17 @@
 declare(strict_types=1);
 namespace Financeiro\Plugins;
 
+use Financeiro\Models\BillReceive;
+use Financeiro\Repository\CategoryCostsRepository;
+use Financeiro\Repository\HomeRepository;
+use Financeiro\Repository\StatementsRepository;
 use Financeiro\ServiceContainerInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Financeiro\Repository\RepositoryFactory;
 use Interop\Container\ContainerInterface;
 use Financeiro\Models\CategoryCost;
 use Financeiro\Models\User;
+use Financeiro\Models\BillPay;
 
 class Dbplugin implements PluginInterface
 {
@@ -19,12 +24,25 @@ class Dbplugin implements PluginInterface
 		$capsule->addConnection($config['development']);
 		$capsule->bootEloquent();
 		$container->add('repository.factory', new RepositoryFactory);
-		$container->addLazy('category-costs.repository', function (ContainerInterface $container){
-			return $container->get('repository.factory')->factory(CategoryCost::class);
+
+		$container->addLazy('category-costs.repository', function (){
+			return new CategoryCostsRepository;
 		});
 
-		$container->addLazy('users.repository', function (ContainerInterface $container){
+        $container->addLazy('bill-receive.repository', function (ContainerInterface $container){
+            return $container->get('repository.factory')->factory(BillReceive::class);
+        });
+
+        $container->addLazy('bill-pay.repository', function (ContainerInterface $container) {
+            return $container->get('repository.factory')->factory(BillPay::class);
+        });
+
+        $container->addLazy('users.repository', function (ContainerInterface $container){
 			return $container->get('repository.factory')->factory(User::class);
 		});
+
+        $container->addLazy('statement.repository', function () {
+            return new StatementsRepository;
+        });
 	}
 }

@@ -11,6 +11,7 @@ use Financeiro\Plugins\AuthPlugin;
 use Zend\Diactoros\Response;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../src/helpers.php';
 
 $serviceContainer = new ServiceContainer();
 $app = new Application($serviceContainer);
@@ -29,5 +30,10 @@ $app->get('/home/{name}/{id}', function (ServerRequestInterface $request) {
 require_once __DIR__.'/../src/Controllers/category-costs.php';
 require_once __DIR__.'/../src/Controllers/users.php';
 require_once __DIR__.'/../src/Controllers/auth.php';
+require_once __DIR__.'/../src/Controllers/bill_receives.php';
+require_once __DIR__.'/../src/Controllers/bill_pays.php';
+require_once __DIR__.'/../src/Controllers/statements.php';
+require_once __DIR__.'/../src/Controllers/charts.php';
+require_once __DIR__.'/../src/Controllers/home.php';
 
 $app->start();

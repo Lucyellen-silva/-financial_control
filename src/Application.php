@@ -5,7 +5,6 @@ namespace Financeiro;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Financeiro\Plugins\PluginInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -13,6 +12,7 @@ use Zend\Diactoros\Response\SapiEmitter;
 class Application 
 {
 	private $serviceContainer;
+	private $befores = [];
 
 	public function __construct(serviceContainerInterface $serviceContainer)
 	{
@@ -48,19 +48,37 @@ class Application
 		return $this;
 	}
 
-	public function redirect($path)
+	public function redirect($path): ResponseInterface
 	{
-		return new \Zend\Diactoros\Response\RedirectResponse($path);
+		return new RedirectResponse($path);
 	}
 
 	public function route(string $name, array $params = [])
 	{
 		$generator = $this->service('routing.generator');
-		$path	   = $generator->generate($name, $params);			
+		$path	   = $generator->generate($name, $params);
 		return $this->redirect($path);
 	}
 
-	public function start()
+	public function before(callable $callback)
+    {
+        array_push($this->befores, $callback);
+        return $this;
+    }
+
+    protected function runBefores(): ?ResponseInterface
+    {
+        foreach ($this->befores as $callaback){
+            $result = $callaback($this->service(RequestInterface::class));
+            if($result instanceof ResponseInterface){
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+	public function start(): void
 	{
 		$route 	  = $this->service('route');
 		$request  = $this->service(RequestInterface::class);
@@ -74,8 +92,15 @@ class Application
 			$request = $request->withAttribute($key, $value);
 		}
 
-		$callable = $route->handler;
-		$this->emitResponse($callable($request));
+		$result = $this->runBefores();
+
+        if ($result){
+            $this->emitResponse($result);
+            return;
+        }
+
+        $callable = $route->handler;
+        $this->emitResponse($callable($request));
 	}
 
 	protected function emitResponse(ResponseInterface $response)

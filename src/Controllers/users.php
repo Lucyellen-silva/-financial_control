@@ -4,6 +4,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 $app
 	->get('/users', function() use($app){
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+
 		$view 		= $app->service('view.render');
 		$repository = $app->service('users.repository');
 		$users = $repository->all();
@@ -13,11 +18,21 @@ $app
 	}, 'users.list')
 
 	->get('/users/new', function() use($app){
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+
 		$view = $app->service('view.render');
 		return $view->render('users/create.html.twig');
 	}, 'users.new')
 
 	->post('/users/store', function(ServerRequestInterface $request) use ($app){
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+
 		$data 		= $request->getParsedBody();
 		$repository = $app->service('users.repository');
 		$repository->create($data);
@@ -25,6 +40,11 @@ $app
 	}, 'users.store')
 
 	->get('/users/{id}/edit', function(ServerRequestInterface $request) use($app){
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+
 		$view 	  	= $app->service('view.render');
 		$repository = $app->service('users.repository');
 		$id   	  	= $request->getAttribute('id');
@@ -35,7 +55,12 @@ $app
 	}, 'users.edit')
 
 	->post('/users/{id}/update', function(ServerRequestInterface $request) use($app){
-		$repository = $app->service('users.repository');
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+
+	    $repository = $app->service('users.repository');
 		$id   	  	= $request->getAttribute('id');
 		$user 		= $repository->find($id);
 		$data 	  	= $request->getParsedBody();
@@ -44,7 +69,11 @@ $app
 	}, 'users.update')
 
 	->get('/users/{id}/show', function(ServerRequestInterface $request) use($app){
-		$view 	  	= $app->service('view.render');
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+	    $view 	  	= $app->service('view.render');
 		$repository = $app->service('users.repository');
 		$id   	  	= $request->getAttribute('id');
 		$user 		= $repository->find($id);
@@ -54,7 +83,12 @@ $app
 	}, 'users.show')
 
 	->get('/users/{id}/delete', function(ServerRequestInterface $request) use($app){
-		$repository = $app->service('users.repository');
+        $auth  = $app->service('auth');
+        if($auth->user()->getId() !== 1){
+            return $app->route('category-costs.list');
+        }
+
+        $repository = $app->service('users.repository');
 		$id   	  	= $request->getAttribute('id');
 		$user 		= $repository->delete($id);
 		return $app->route('users.list');
