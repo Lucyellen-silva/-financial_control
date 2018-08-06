@@ -10,6 +10,7 @@ class CreateCategoryCosts extends AbstractMigration
             ->addColumn('name', 'string')
             ->addColumn('created_at', 'datetime')
             ->addColumn('updated_at', 'datetime')
+            ->addColumn('deleted_at', 'datetime', ['null' => true])
             ->save();
    }
 

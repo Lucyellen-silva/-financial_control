@@ -9,29 +9,50 @@
                         Home
                     </h3>
                 </div>
+                {% for mes in meses %}
                 <div class="panel-body">
                     <br/>
                     <div class="row">
                         <div class="col-md-12">
+                            {% for key, date in dates %}
+                                {% if key == mes %}
+                                    <h3>
+                                        {{ date }}
+                                    </h3>
+                                {% endif %}
+                            {% endfor %}
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th style="width: 10px">#</th>
                                     <th>Categoria</th>
                                     <th>Valor</th>
-
                                 </tr>
                                 </thead>
                                 <tbody>
-                                   <tr>
-                                        <td></td>
-                                        <td></td>
-                                   </tr>
+                                {% for key, allCategory in categories %}
+                                    {% if key == mes %}
+                                        {% for category in allCategory %}
+                                           <tr>
+                                               <td>{{ category.name }}</td>
+                                               <td>{{ category.value | number_format(2, ',', '.') }}</td>
+                                           </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
                                 </tbody>
                             </table>
+                            {% for key, statement in statements %}
+                                {% if key == mes %}
+                                    <h4>
+                                        <span>Total: <b> R$ {{ statement.total_pays | number_format(2, ',', '.') }}</b></span>
+                                    </h4>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+                <br/>
             </div>
         </div>
     </div>

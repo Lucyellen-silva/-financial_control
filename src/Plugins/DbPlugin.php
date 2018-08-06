@@ -11,7 +11,6 @@ use Financeiro\ServiceContainerInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Financeiro\Repository\RepositoryFactory;
 use Interop\Container\ContainerInterface;
-use Financeiro\Models\CategoryCost;
 use Financeiro\Models\User;
 use Financeiro\Models\BillPay;
 

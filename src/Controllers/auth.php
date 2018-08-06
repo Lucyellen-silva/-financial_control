@@ -17,7 +17,7 @@ $app
         if(!$result) {
             return $view->render('auth/login.html.twig');
         }
-        return $app->route('category-costs.list');
+        return $app->route('home');
     }, 'auth.login')
 
     ->get(

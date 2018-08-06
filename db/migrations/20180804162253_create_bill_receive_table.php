@@ -13,6 +13,7 @@ class CreateBillReceiveTable extends AbstractMigration
              ->addColumn('user_id', 'integer')
              ->addColumn('created_at', 'datetime')
              ->addColumn('updated_at', 'datetime')
+             ->addColumn('deleted_at', 'datetime', ['null' => true])
              ->addForeignKey('user_id', 'users', 'id')
              ->save();
     }

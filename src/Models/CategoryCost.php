@@ -7,6 +7,7 @@ class CategoryCost extends Model
 {
 	protected $fillable = [
 		'name',
-        'user_id'
+        'user_id',
+        'deleted_at'
 	];
 }

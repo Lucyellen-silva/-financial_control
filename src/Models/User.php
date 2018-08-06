@@ -11,7 +11,8 @@ class User extends Model implements JasnyUser, UserInterface
 		'first_name',
         'last_name',
         'email',
-        'password'
+        'password',
+        'deleted_at'
 	];
 
 	public function getId():int

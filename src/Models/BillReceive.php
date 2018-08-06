@@ -10,6 +10,7 @@ class BillReceive extends Model
         'date_launch',
         'name',
         'value',
-        'user_id'
+        'user_id',
+        'deleted_at'
     ];
 }

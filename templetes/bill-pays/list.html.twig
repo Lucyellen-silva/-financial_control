@@ -28,6 +28,7 @@
 										<th>Nome</th>
 										<th>Valor</th>
 										<th>Categoria</th>
+										<th>Parcelas</th>
 										<th>Ações</th>
 									</tr>
 								</thead>
@@ -39,6 +40,7 @@
 										<td>{{ bill.name }}</td>
 										<td>R$ {{ bill.value  | number_format(2, ',', '.') }}</td>
 										<td>{{ bill.categoryCost.name }}</td>
+										<td>{{ bill.plots }}x</td>
 										<td>
 											<a href="{{ route('bill-pays.edit', {'id' : bill.id}) }}">
 												<span class="glyphicon glyphicon-pencil"></span>

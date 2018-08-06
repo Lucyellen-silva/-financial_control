@@ -20,9 +20,14 @@ $app
         $auth               = $app->service('auth');
         $categoryRepository = $app->service('category-costs.repository');
         $categories         = $categoryRepository->findByField('user_id', $auth->user()->getId());
+        $mesCobranca        = [
+            '1' => 'Mês Atual',
+            '2' => 'Mês que vem',
+        ];
 
         return $view->render('bill-pays/create.html.twig', [
-                'categories' => $categories
+            'categories' => $categories,
+            'mesCobranca'=> $mesCobranca
         ]);
 
     }, 'bill-pays.new')
@@ -40,7 +45,11 @@ $app
                 'user_id' => $auth->user()->getId()
         ])->id;
 
-        $repository->create($data);
+        if(empty($data['plots'])){
+            $repository->create($data);
+        } else {
+            $repository->createPlots($data);
+        }
 
         return $app->route('bill-pays.list');
 
@@ -79,7 +88,7 @@ $app
                 'user_id' => $auth->user()->getId()
         ])->id;
 
-        $repository->update([
+        $repository->updatePlots([
                 'id'      => $id,
                 'user_id' => $auth->user()->getId()
         ], $data);

@@ -3,7 +3,7 @@
 		<label class="control-label">Categoria de Custo</label>
 		<select class="form-control" value="{{ bill.category_cost_id }}"
 				name="category_cost_id">
-            {% for category in categories%}
+            {% for category in categories %}
 				<option value="{{ category.id }}"
                         {{ bill.category_cost_id is not null and bill.category_cost_id == category.id?'selected="selected"':'' }}>
                     {{ category.name }}
@@ -20,12 +20,27 @@
 		<input class="form-control" type="text" name="name" placeholder="Nome" value="{{ bill.name }}">
 	</div>
 	<div class="form-group">
-		<label class="control-label">Valor</label>
+		<label class="control-label">Valor por parcela</label>
 		<input class="form-control" type="text" name="value" placeholder="0.000,00" value="{{ bill.value  | number_format(2, ',', '.') }}">
 	</div>
 	<div class="form-group">
 		<label class="control-label">Parcelas</label>
-		<input class="form-control" type="text" name="parcelas" placeholder="1x" value="{{ bill.parcelas}}">
+		<input class="form-control" type="number" name="plots" placeholder="1" value="{{ bill.plots}}">
+	</div>
+	<div class="form-group">
+		<label class="control-label">Selecione o mes de cobrança</label>
+		<select class="form-control" value="" name="mes">
+            {% for key, fatura in mesCobranca %}
+				{{ key }}
+				<option value="{{ key }}">
+                    {{ fatura }}
+				</option>
+            {% endfor %}
+		</select>
+	</div>
+    <div class="form-group">
+		<label class="control-label">Descrição</label>
+		<input class="form-control" type="text" name="coments" placeholder="Digite um descrição" value="{{ bill.coments}}">
 	</div>
 	<button type="submit" class="btn btn-primary btn-block">
 		<span class="glyphicon glyphicon-{{ submitIcon }}"></span>

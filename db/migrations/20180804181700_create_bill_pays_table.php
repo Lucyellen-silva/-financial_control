@@ -12,8 +12,11 @@ class CreateBillPaysTable extends AbstractMigration
             ->addColumn('value', 'float')
             ->addColumn('user_id', 'integer')
             ->addColumn('category_cost_id', 'integer')
+            ->addColumn('coments', 'string', ['null' => true])
+            ->addColumn('group_plots', 'string', ['null' => true])
             ->addColumn('created_at', 'datetime')
             ->addColumn('updated_at', 'datetime')
+            ->addColumn('deleted_at', 'datetime', ['null' => true])
             ->addForeignKey('user_id', 'users', 'id')
             ->addForeignKey('category_cost_id', 'category_costs', 'id')
             ->save();

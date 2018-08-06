@@ -16,7 +16,11 @@ class BillPay extends Model
         'name',
         'value',
         'user_id',
-        'category_cost_id'
+        'category_cost_id',
+        'plots',
+        'coments',
+        'group_plots',
+        'deleted_at'
     ];
 
     public function categoryCost()
