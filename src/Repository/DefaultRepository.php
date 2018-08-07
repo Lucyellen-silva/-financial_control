@@ -93,35 +93,51 @@ class DefaultRepository implements RepositoryInterface
 
     public function updatePlots($id, $data)
     {
-        $model   = $this->findInternal($id);
-        $allPays = $this->findByField('group_plots', $model->group_plots);
-        $plots   = $data['plots'];
+        $model    = $this->findInternal($id);
+        $allPays  = $this->findByField('group_plots', $model->group_plots);
+        $allPlots = count($allPays);
+        $plots    = $data['plots'];
 
-        if ($plots == $model->plots){
+        if ($plots == $allPlots){
             foreach ($allPays as $pay){
                 return $this->update($pay->id, $data);
             }
         }
 
-        if( $plots <= $model->plots ) {
-            $plots = $model->plots - $plots;
-            array_reverse($allPays);
-            for ($i = 1 ; $i <= $plots; $i++){
+        if( $plots <= $allPlots ) {
+            $plot = $allPlots - $plots;
+            for ($i = 1; $i <= $plot; $i++){
                 $this->delete($allPays[$i]->id);
             }
+
+            $allPays  = $this->findByField('group_plots', $model->group_plots);
+            foreach ($allPays as $pay){
+                $data['plots'] = $plots;
+                return $this->update($pay->id, $data);
+                $plots -= 1;
+            }
+
         } else {
-            $plots = $plots - $model->plots ;
-            for($i = $model->plots; $i <= $plots; $i++){
-                //Se a fatura vem para esse mes
-                if($data['mes'] == 1){
-                    $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
-                }
+            //ordem de parcelas
+            $Plot     = $plots;
+            $plots    = $plots - $allPlots ;
+            $allPlot  = $allPlots - 1;
+            $data['date_launch'] = $allPays[$allPlot]->date_launch;
+
+            foreach ($allPays as $allPay){
+                $allPay->plots = $Plot;
+                $allPay->save();
+                $Plot -= 1;
+            }
+
+            for($i = $allPlot; $i <= $plots; $i++){
+                $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
+                $data['plots']       = $Plot;
                 $this->model->create($data);
-                $data['plots']      -= 1;
+                $Plot -= 1;
                 $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
             }
         }
-
         return $this->model;
     }
 }

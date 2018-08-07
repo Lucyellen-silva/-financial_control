@@ -16,7 +16,7 @@ $app
         $statement   = [];
         $meses       = [];
 
-        for ($i = 1; $i <= date('m'); $i++) {
+        for ($i = 1; $i <= 12; $i++) {
 
             $ultimo_dia = date("t", mktime(0,0,0,$i ,'01',$year));
 

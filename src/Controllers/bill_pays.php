@@ -67,10 +67,15 @@ $app
 
         $categoryRepository = $app->service('category-costs.repository');
         $categories         = $categoryRepository->findByField('user_id', $auth->user()->getId());
+        $mesCobranca        = [
+            '1' => 'Mês Atual',
+            '2' => 'Mês que vem',
+        ];
 
         return $view->render('bill-pays/edit.html.twig', [
-                'bill'       => $bill,
-                'categories' => $categories
+            'bill'       => $bill,
+            'categories' => $categories,
+            'mesCobranca'=> $mesCobranca
         ]);
     }, 'bill-pays.edit')
 

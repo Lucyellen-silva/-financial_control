@@ -41,6 +41,10 @@
 										<th scope="row">Valor</th>
 										<td>R$ {{ bill.value  | number_format(2, ',', '.') }}</td>
 									</tr>
+									<tr>
+										<th scope="row">Parcela</th>
+										<td>{{ bill.plots }}</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>	
