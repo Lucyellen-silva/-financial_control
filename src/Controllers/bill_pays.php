@@ -118,7 +118,7 @@ $app
         $id         = $request->getAttribute('id');
         $auth       = $app->service('auth');
 
-        $repository->delete([
+        $repository->deletePlots([
                 'id'      => $id,
                 'user_id' => $auth->user()->getId()
         ]);

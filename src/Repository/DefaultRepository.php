@@ -51,7 +51,12 @@ class DefaultRepository implements RepositoryInterface
         return is_array($id) ? $this->findOneBy($id) : $this->find($id);
     }
 
-	public function find(int $id, bool $failIfNotExist = true)
+    /**
+     * @param int $id
+     * @param bool $failIfNotExist
+     * @return mixed
+     */
+    public function find(int $id, bool $failIfNotExist = true)
 	{
 		return $failIfNotExist ? $this->model->findOrFail($id) : $this->model->find($id);
 	}
@@ -94,32 +99,81 @@ class DefaultRepository implements RepositoryInterface
     public function updatePlots($id, $data)
     {
         $model   = $this->findInternal($id);
-        $allPays = $this->findByField('group_plots', $model->group_plots);
         $plots   = $data['plots'];
 
         if ($plots == $model->plots){
+            $allPays = $this->findByField('group_plots', $model->group_plots);
+
             foreach ($allPays as $pay){
                 return $this->update($pay->id, $data);
             }
+
         }
 
         if( $plots <= $model->plots ) {
+            $allPays = $this->findByField('group_plots', $model->group_plots);
+
             $plots = $model->plots - $plots;
-            array_reverse($allPays);
+
             for ($i = 1 ; $i <= $plots; $i++){
                 $this->delete($allPays[$i]->id);
             }
+
+            $plot    = $model->plots;
+            $allPays = $this->findByField('group_plots', $model->group_plots);
+
+            foreach ($allPays as $pay){
+                $pay['plots'] = $plot;
+                return $this->update($pay->id, $data);
+                $plot -= 1;
+            }
+
         } else {
-            $plots = $plots - $model->plots ;
-            for($i = $model->plots; $i <= $plots; $i++){
-                //Se a fatura vem para esse mes
+            //Se as parcelas forem maior que o que tem atual
+            $allPays  = $this->findByField('group_plots', $model->group_plots);
+            $plot     =  $data['plots'];
+
+            foreach ($allPays as $pay){
+                $pay['plots'] = $plot;
+                $pay->save();
+                $plot -= 1;
+            }
+
+            $plots    = $plots - count($allPays);
+
+            for($i = count($allPays); $i <= $plots + 1; $i++){
+
+                $data['plots'] = $plot;
+
                 if($data['mes'] == 1){
                     $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
                 }
+
                 $this->model->create($data);
-                $data['plots']      -= 1;
+
+                $plot -= 1;
                 $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
             }
+        }
+
+        return $this->model;
+    }
+
+    public function deletePlots($id)
+    {
+        $model = $this->findInternal($id);
+
+        $this->delete($id);
+
+        $allPays = $this->findByField('group_plots', $model->group_plots);
+        $plots   = count($allPays);
+
+        foreach ($allPays as $pay)
+        {
+            $pay['plots'] = $plots;
+            $pay->save();
+
+            $plots -= 1;
         }
 
         return $this->model;
