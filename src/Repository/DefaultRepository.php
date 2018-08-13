@@ -99,22 +99,17 @@ class DefaultRepository implements RepositoryInterface
     public function updatePlots($id, $data)
     {
         $model   = $this->findInternal($id);
+        $allPays = $this->findByField('group_plots', $model->group_plots);
         $plots   = $data['plots'];
 
         if ($plots == $model->plots){
-            $allPays = $this->findByField('group_plots', $model->group_plots);
-
             foreach ($allPays as $pay){
                 return $this->update($pay->id, $data);
             }
-
         }
 
         if( $plots <= $model->plots ) {
-            $allPays = $this->findByField('group_plots', $model->group_plots);
-
             $plots = $model->plots - $plots;
-
             for ($i = 1 ; $i <= $plots; $i++){
                 $this->delete($allPays[$i]->id);
             }
@@ -129,31 +124,24 @@ class DefaultRepository implements RepositoryInterface
             }
 
         } else {
-            //Se as parcelas forem maior que o que tem atual
-            $allPays  = $this->findByField('group_plots', $model->group_plots);
-            $plot     =  $data['plots'];
+            $plot  = $data['plots'];
+            $plots = $plot-count($allPays);
 
-            foreach ($allPays as $pay){
-                $pay['plots'] = $plot;
-                $pay->save();
-                $plot -= 1;
+            for($i = 1; $i <= $plots; $i++){
+                $data['group_plots'] = $model->group_plots;
+                $this->model->create($data);
             }
 
-            $plots    = $plots - count($allPays);
+            $allPays   = $this->findByField('group_plots', $model->group_plots);
+            $dateFirst = $allPays->first();
+            $date      = $dateFirst->date_launch;
 
-            for($i = count($allPays); $i <= $plots + 1; $i++){
-
-                $data['plots'] = $plot;
-
-                if($data['mes'] == 1){
-                    $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
-                }
-
-                $this->model->create($data);
-
+            foreach ($allPays as $pay){
+                $data['date_launch'] = $date;
+                $pay['plots']        = $plot;
+                $pay->save();
                 $plot -= 1;
-
-                $data['date_launch'] = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
+                $date = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
             }
         }
         return $this->model;
