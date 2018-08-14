@@ -29,13 +29,17 @@ $app
 
 	->post('/users/store', function(ServerRequestInterface $request) use ($app){
         $auth  = $app->service('auth');
+
         if($auth->user()->getId() !== 1){
             return $app->route('category-costs.list');
         }
 
-		$data 		= $request->getParsedBody();
-		$repository = $app->service('users.repository');
+		$data 		      = $request->getParsedBody();
+        $data['password'] = $auth->hashPassword($data['password']);
+		$repository       = $app->service('users.repository');
+
 		$repository->create($data);
+
 		return $app->route('users.list');
 	}, 'users.store')
 
@@ -62,8 +66,9 @@ $app
 
 	    $repository = $app->service('users.repository');
 		$id   	  	= $request->getAttribute('id');
-		$user 		= $repository->find($id);
-		$data 	  	= $request->getParsedBody();
+		$user 		      = $repository->find($id);
+		$data 	  	      = $request->getParsedBody();
+        $data['password'] = $auth->hashPassword($data['password']);
 		$repository->update($id, $data);
 		return $app->route('users.list');
 	}, 'users.update')
