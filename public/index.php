@@ -1,7 +1,6 @@
 <?php
 
 use Psr\Http\Message\ServerRequestInterface;
-use Financeiro\Models\CategoryCost;
 use Financeiro\ServiceContainer;
 use Financeiro\Application;
 use Financeiro\Plugins\RoutePlugin;
@@ -11,6 +10,12 @@ use Financeiro\Plugins\AuthPlugin;
 use Zend\Diactoros\Response;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+if (file_exists(__DIR__.'/../.env')){
+    $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../');
+    $dotenv->overload();
+}
+
 require_once __DIR__ . '/../src/helpers.php';
 
 $serviceContainer = new ServiceContainer();
