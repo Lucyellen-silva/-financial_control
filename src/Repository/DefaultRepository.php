@@ -21,7 +21,7 @@ class DefaultRepository implements RepositoryInterface
 
 	public function all(): array
     {
-        return $this->model->all()->whereNull('deleted_at')->toArray();
+        return $this->model->whereNull('deleted_at')->get()->toArray();
     }
 
 	public function create(array $data)
