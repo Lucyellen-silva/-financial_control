@@ -132,36 +132,39 @@ class DefaultRepository implements RepositoryInterface
                 $this->model->create($data);
             }
 
-            $allPays   = $this->findByField('group_plots', $model->group_plots);
-            $dateFirst = $allPays->first();
-            $date      = $dateFirst->date_launch;
+            $allPays             = $this->findByField('group_plots', $model->group_plots);
+            $dateFirst           = $allPays->first();
+            $date                = $dateFirst->date_launch;
 
             foreach ($allPays as $pay){
-                $data['date_launch'] = $date;
-                $pay['plots']        = $plot;
+                $pay['date_launch'] = $date;
+                $pay['plots']       = $plot;
                 $pay->save();
+
                 $plot -= 1;
-                $date = date("Y-m-d", strtotime("+1 month", strtotime($data['date_launch'])));
+                $date = date("Y-m-d", strtotime("+1 month", strtotime($pay['date_launch'])));
             }
         }
-        return $this->model;
-    }
+        return $this->model;    }
 
     public function deletePlots($id)
     {
-        $model = $this->findInternal($id);
-
+        $model     = $this->findInternal($id);
+        $allPays   = $this->findByField('group_plots', $model->group_plots);
+        $dateFirst = $allPays->first();
+        $date      = $dateFirst->date_launch;
         $this->delete($id);
 
-        $allPays = $this->findByField('group_plots', $model->group_plots);
-        $plots   = count($allPays);
+        $pays = $this->findByField('group_plots', $model->group_plots);
+        $plot = count($pays);
 
-        foreach ($allPays as $pay)
-        {
-            $pay['plots'] = $plots;
+        foreach ($pays as $pay){
+            $pay['date_launch'] = $date;
+            $pay['plots']       = $plot;
             $pay->save();
 
-            $plots -= 1;
+            $plot -= 1;
+            $date = date("Y-m-d", strtotime("+1 month", strtotime($pay['date_launch'])));
         }
 
         return $this->model;
