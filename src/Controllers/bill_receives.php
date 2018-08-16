@@ -31,7 +31,7 @@ $app
         $auth                = $app->service('auth');
         $data['user_id']     = $auth->user()->getId();
         $data['date_launch'] = dateParse($data['date_launch']);
-        $data['value']       = numberPerse($data['value']);
+        $data['value']       = numberParse($data['value']);
 
         $repository->create($data);
 
