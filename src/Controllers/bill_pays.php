@@ -46,6 +46,7 @@ $app
         ])->id;
 
         if(empty($data['plots'])){
+            $data['plots'] = 1;
             $repository->create($data);
         } else {
             $repository->createPlots($data);
