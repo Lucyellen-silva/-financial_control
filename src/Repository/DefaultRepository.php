@@ -149,24 +149,29 @@ class DefaultRepository implements RepositoryInterface
 
     public function deletePlots($id)
     {
-        $model     = $this->findInternal($id);
-        $allPays   = $this->findByField('group_plots', $model->group_plots);
-        $dateFirst = $allPays->first();
-        $date      = $dateFirst->date_launch;
-        $this->delete($id);
+        $model = $this->findInternal($id);
 
-        $pays = $this->findByField('group_plots', $model->group_plots);
-        $plot = count($pays);
+        if ( !is_null($model->group_plots)) {
+            $allPays   = $this->findByField('group_plots', $model->group_plots);
+            $dateFirst = $allPays->first();
+            $date      = $dateFirst->date_launch;
+            $this->delete($id);
 
-        foreach ($pays as $pay){
-            $pay['date_launch'] = $date;
-            $pay['plots']       = $plot;
-            $pay->save();
+            $pays = $this->findByField('group_plots', $model->group_plots);
+            $plot = count($pays);
 
-            $plot -= 1;
-            $date = date("Y-m-d", strtotime("+1 month", strtotime($pay['date_launch'])));
+            foreach ($pays as $pay){
+                $pay['date_launch'] = $date;
+                $pay['plots']       = $plot;
+                $pay->save();
+
+                $plot -= 1;
+                $date = date("Y-m-d", strtotime("+1 month", strtotime($pay['date_launch'])));
+            }
+
+            return $this->model;
         }
 
-        return $this->model;
+        $this->delete($id);
     }
 }
